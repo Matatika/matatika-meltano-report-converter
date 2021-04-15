@@ -1,0 +1,3 @@
+Run from a meltano project top level dir
+
+python ../matatika-meltano-report-converter/main.py
