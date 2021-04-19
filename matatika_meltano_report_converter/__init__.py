@@ -105,7 +105,8 @@ def matatika_metadata_builder(full_design):
         matatika_metadata["related_table"]["columns"] = matatika_metadata_columns["columns"]
         matatika_metadata["related_table"]["aggregates"] = matatika_metadata_aggregates["aggregates"]
     except:
-        pass
+        matatika_metadata["related_table"]["columns"] = None
+        matatika_metadata["related_table"]["aggregates"] = None
 
     matatika_metadata_str = json.dumps(matatika_metadata)
     return matatika_metadata_str
