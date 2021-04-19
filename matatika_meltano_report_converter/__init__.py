@@ -71,5 +71,5 @@ def matatika_convert_reports():
 
 
 
-if __name__ == '__main__':
+if __name__ == '__init__':
     matatika_convert_reports()

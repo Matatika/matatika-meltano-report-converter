@@ -1,16 +1,17 @@
-import setuptools
+from setuptools import find_packages, setup
 
-setuptools.setup(
-    name="matatika-meltano-report-converter-DanielPDWalker", # Replace with your own username
-    version="0.0.1",
-    author="DanielPDWalker",
-    author_email="dwalker@matatika.com",
-    description="Matatika's meltano report converter",
-    url="https://github.com/pypa/sampleproject",
-    project_urls={
-        "Bug Tracker": "https://github.com/pypa/sampleproject/issues",
-    },
-    package_dir={"": "src"},
-    packages=setuptools.find_packages(where="src"),
-    python_requires=">=3.6",
+setup(
+    name='matatika-meltano-report-converter',
+    version='0.1.0',
+    py_modules=['matatika_meltano_report_converter'],
+    entry_points='''
+        [console_scripts]
+        matatika-meltano-report-converter=matatika_meltano_report_converter:matatika_convert_reports
+    ''',
+    packages=['matatika_meltano_report_converter'],
+    include_package_data=True,
+    install_requires=[
+          'pyyaml==5.4.1',
+          'meltano'
+    ],
 )
