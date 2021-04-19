@@ -1,6 +1,7 @@
 import json
 import yaml
 import os
+import logging
 
 from meltano.api.controllers.sql_helper import SqlHelper
 from meltano.core.m5o.m5o_collection_parser import M5oCollectionParser, M5oCollectionParserTypes
@@ -52,12 +53,17 @@ def matatika_convert_reports():
             # If you pass dicts straight to the yaml dump you get the yaml teired layout rather than a json object to pass. 
             # This means that in the yaml the metadata and visulisation will have single quotes around them to avoid the above.
             visualisation_jsonstr = json.dumps(visualisation)
-            full_design_jsonstr = json.dumps(full_design)
+
+            #full_design_jsonstr = json.dumps(full_design)
+
+            matatika_metadata_str = matatika_metadata_builder(full_design)
+
             dataset = {
+                "source": None, 
                 "title": title,
-                "questions": title,
+                "questions": None,
                 "description": description,
-                "metadata": full_design_jsonstr,
+                "metadata": matatika_metadata_str,
                 "visualisation": visualisation_jsonstr,
                 "query": sql_query["query"],
             }
@@ -65,10 +71,44 @@ def matatika_convert_reports():
 
             datasets = {"datasets": {data["slug"]: dataset}}
 
-            with open(f'analyze/reports/{data["slug"]}.yaml', 'w') as output:
+            if not os.path.exists('converted_meltano_reports/'):
+                os.mkdir('converted_meltano_reports/')
+
+            with open(f'converted_meltano_reports/{data["slug"]}.yaml', 'w') as output:
                 yaml.dump(datasets, output, sort_keys=False, encoding='utf8')
 
+def matatika_metadata_builder(full_design):
+    
+    matatika_metadata = {"name": None, "label": None, "related_table": {"columns": {}, "aggregates": {}}}
 
+    try:
+        matatika_metadata["name"] = full_design["name"]
+    except:
+        matatika_metadata["name"] = None
+
+    try:
+        matatika_metadata["label"] = full_design["label"]
+    except:
+        matatika_metadata["label"] = None
+    
+    
+    matatika_metadata_columns = {"columns": []}
+    for column in full_design["related_table"]["columns"]:
+        matatika_metadata_columns["columns"].append({"name": column["name"], "description": column["description"], "label": column["label"]})
+
+    matatika_metadata_aggregates = {"aggregates": []}
+    for aggregate in full_design["related_table"]["aggregates"]:
+        matatika_metadata_aggregates["aggregates"].append({"name": aggregate["name"], "description": aggregate["description"], "label": aggregate["label"]})
+
+
+    try:
+        matatika_metadata["related_table"]["columns"] = matatika_metadata_columns["columns"]
+        matatika_metadata["related_table"]["aggregates"] = matatika_metadata_aggregates["aggregates"]
+    except:
+        pass
+
+    matatika_metadata_str = json.dumps(matatika_metadata)
+    return matatika_metadata_str
 
 
 if __name__ == '__init__':
