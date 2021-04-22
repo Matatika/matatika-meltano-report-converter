@@ -1,7 +1,6 @@
 import json
 import yaml
 import os
-import logging
 
 from meltano.api.controllers.sql_helper import SqlHelper
 from meltano.core.m5o.m5o_collection_parser import M5oCollectionParser, M5oCollectionParserTypes
@@ -56,7 +55,7 @@ def matatika_convert_reports():
 
             #full_design_jsonstr = json.dumps(full_design)
 
-            matatika_metadata_str = matatika_metadata_builder(full_design)
+            matatika_metadata_str = matatika_metadata_builder(full_design, sql_query["query"])
 
             dataset = {
                 "source": None, 
@@ -77,7 +76,7 @@ def matatika_convert_reports():
             with open(f'converted_meltano_reports/{data["slug"]}.yaml', 'w') as output:
                 yaml.dump(datasets, output, sort_keys=False, encoding='utf8')
 
-def matatika_metadata_builder(full_design):
+def matatika_metadata_builder(full_design, sql_query):
     
     matatika_metadata = {"name": None, "label": None, "related_table": {"columns": {}, "aggregates": {}}}
 
@@ -94,11 +93,13 @@ def matatika_metadata_builder(full_design):
     
     matatika_metadata_columns = {"columns": []}
     for column in full_design["related_table"]["columns"]:
-        matatika_metadata_columns["columns"].append({"name": column["name"], "description": column["description"], "label": column["label"]})
+        if column["name"] in sql_query:
+            matatika_metadata_columns["columns"].append({"name": column["name"], "description": column["description"], "label": column["label"]})
 
     matatika_metadata_aggregates = {"aggregates": []}
     for aggregate in full_design["related_table"]["aggregates"]:
-        matatika_metadata_aggregates["aggregates"].append({"name": aggregate["name"], "description": aggregate["description"], "label": aggregate["label"]})
+        if aggregate["name"] in sql_query:
+            matatika_metadata_aggregates["aggregates"].append({"name": aggregate["name"], "description": aggregate["description"], "label": aggregate["label"]})
 
 
     try:

@@ -1,4 +1,8 @@
+import os
 from setuptools import find_packages, setup
+
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
 
 setup(
     name='matatika-meltano-report-converter',
@@ -11,10 +15,7 @@ setup(
         [console_scripts]
         matatika-meltano-report-converter=matatika_meltano_report_converter:matatika_convert_reports
     ''',
-    install_requires=[
-          'pyyaml==5.4.1',
-          'meltano'
-    ],
+    install_requires=required,
     packages=['matatika_meltano_report_converter'],
     include_package_data=True,
 )
