@@ -47,7 +47,7 @@ def matatika_convert_reports():
                 #'google-chart': {"chartType": self.google_chart_type(data["chart_type"]), "options": {"title": title}}
             }
 
-            sql_query = {"query": generate_query(design_helper, sql_helper, data)}
+            sql_query = generate_query(design_helper, sql_helper, data)
 
             # If you pass dicts straight to the yaml dump you get the yaml teired layout rather than a json object to pass. 
             # This means that in the yaml the metadata and visulisation will have single quotes around them to avoid the above.
@@ -55,7 +55,7 @@ def matatika_convert_reports():
 
             #full_design_jsonstr = json.dumps(full_design)
 
-            matatika_metadata_str = matatika_metadata_builder(full_design, sql_query["query"])
+            matatika_metadata_str = matatika_metadata_builder(full_design, sql_query)
 
             dataset = {
                 "source": None, 
@@ -64,7 +64,7 @@ def matatika_convert_reports():
                 "description": description,
                 "metadata": matatika_metadata_str,
                 "visualisation": visualisation_jsonstr,
-                "query": sql_query["query"],
+                "query": sql_query,
             }
             
 
