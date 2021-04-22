@@ -24,13 +24,13 @@ def generate_query(design_helper, sql_helper, report):
 
 
 def matatika_convert_reports():
-    report_list = []
     try:
         report_list = [
             file for file in os.listdir("./analyze/reports") if file[-4:] == ".m5o"
         ]
     except FileNotFoundError:
         print("analyze/reports directory not found in this meltano project.")
+        exit(1)
 
     for file in report_list:
         with open("./analyze/reports/" + file, "r") as open_file:
@@ -51,7 +51,14 @@ def matatika_convert_reports():
             # If you pass dicts straight to the yaml dump you get the yaml teir-ed layout rather than a json object to pass.
             # This means that in the yaml the metadata and visulisation will have single quotes around them to avoid the above tier-ing.
             visualisation_jsonstr = json.dumps(visualisation)
-            matatika_metadata_str = matatika_metadata_builder(full_design, sql_query)
+
+            try:
+                matatika_metadata_str = matatika_metadata_builder(
+                    full_design, sql_query
+                )
+            except KeyError as err:
+                print(f"{err} ERROR")
+                exit(1)
 
             dataset = {
                 "source": None,
@@ -77,23 +84,16 @@ def matatika_metadata_builder(full_design, sql_query):
     matatika_metadata = {
         "name": None,
         "label": None,
-        "related_table": {"columns": {}, "aggregates": {}},
+        "related_table": {"columns": [], "aggregates": []},
     }
 
-    try:
-        matatika_metadata["name"] = full_design["name"]
-    except:
-        matatika_metadata["name"] = None
+    matatika_metadata["name"] = full_design["name"]
 
-    try:
-        matatika_metadata["label"] = full_design["label"]
-    except:
-        matatika_metadata["label"] = None
+    matatika_metadata["label"] = full_design["label"]
 
-    matatika_metadata_columns = {"columns": []}
     for column in full_design["related_table"]["columns"]:
         if column["name"] in sql_query:
-            matatika_metadata_columns["columns"].append(
+            matatika_metadata["related_table"]["columns"].append(
                 {
                     "name": column["name"],
                     "description": column["description"],
@@ -101,27 +101,15 @@ def matatika_metadata_builder(full_design, sql_query):
                 }
             )
 
-    matatika_metadata_aggregates = {"aggregates": []}
     for aggregate in full_design["related_table"]["aggregates"]:
         if aggregate["name"] in sql_query:
-            matatika_metadata_aggregates["aggregates"].append(
+            matatika_metadata["related_table"]["aggregates"].append(
                 {
                     "name": aggregate["name"],
                     "description": aggregate["description"],
                     "label": aggregate["label"],
                 }
             )
-
-    try:
-        matatika_metadata["related_table"]["columns"] = matatika_metadata_columns[
-            "columns"
-        ]
-        matatika_metadata["related_table"]["aggregates"] = matatika_metadata_aggregates[
-            "aggregates"
-        ]
-    except:
-        matatika_metadata["related_table"]["columns"] = None
-        matatika_metadata["related_table"]["aggregates"] = None
 
     matatika_metadata_str = json.dumps(matatika_metadata)
     return matatika_metadata_str
