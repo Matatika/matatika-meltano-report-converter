@@ -52,13 +52,7 @@ def matatika_convert_reports():
             # This means that in the yaml the metadata and visulisation will have single quotes around them to avoid the above tier-ing.
             visualisation_jsonstr = json.dumps(visualisation)
 
-            try:
-                matatika_metadata_str = matatika_metadata_builder(
-                    full_design, sql_query
-                )
-            except KeyError as err:
-                print(f"{err} ERROR")
-                exit(1)
+            matatika_metadata_str = matatika_metadata_builder(full_design, sql_query)
 
             dataset = {
                 "source": None,
@@ -92,11 +86,19 @@ def matatika_metadata_builder(full_design, sql_query):
     matatika_metadata["label"] = full_design["label"]
 
     for column in full_design["related_table"]["columns"]:
-        if column["name"] in sql_query:
+        # if column["name"] in sql_query:
+        try:
             matatika_metadata["related_table"]["columns"].append(
                 {
                     "name": column["name"],
                     "description": column["description"],
+                    "label": column["label"],
+                }
+            )
+        except:
+            matatika_metadata["related_table"]["columns"].append(
+                {
+                    "name": column["name"],
                     "label": column["label"],
                 }
             )
