@@ -61,7 +61,6 @@ def matatika_convert_reports():
                 exit(1)
 
             dataset = {
-                "version": 0.2,
                 "source": None,
                 "title": title,
                 "questions": None,
@@ -71,11 +70,13 @@ def matatika_convert_reports():
                 "query": sql_query,
             }
 
+            datasets = {"datasets": {data["slug"]: dataset}}
+
             if not os.path.exists("converted_meltano_reports/"):
                 os.mkdir("converted_meltano_reports/")
 
             with open(f'converted_meltano_reports/{data["slug"]}.yaml', "w") as output:
-                yaml.dump(dataset, output, sort_keys=False, encoding="utf8")
+                yaml.dump(datasets, output, sort_keys=False, encoding="utf8")
 
 
 def matatika_metadata_builder(full_design, sql_query):
