@@ -1,4 +1,7 @@
 # matatika-meltano-report-converter
+The `matatika-meltano-report-converter` is designed to be used as a custom uility within a meltano project.
+
+It takes advantage of the meltano helper functions to create the metadata and sql query for the converted dataset.
 
 ## Branches
 ### Main
@@ -10,10 +13,6 @@
 - No specific filtering for metadata. Returns it all leading to some very large metadata structures in some cases. (Seems the only way to get some generic meltano reports to convert and work though).
 
 # How To Use
-The `matatika-meltano-report-converter` is designed to be used as a custom uility within a meltano project.
-
-It takes advantage of the meltano helper functions to create the metadata and sql query for the converted dataset.
-
 ## Installing
 
 Initially you will need to either git clone this repositiory and install it to metlano from your system or you will need to have a custom discovery.yaml file that adds this utility as recognised by meltano by default.
