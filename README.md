@@ -33,3 +33,5 @@ Initially you will need to either git clone this repositiory and install it to m
 ![matatikareportconverterinstallexample](https://user-images.githubusercontent.com/34437496/117323235-9eeb3f00-ae86-11eb-83d3-2e47cca03552.png)
 
 Its best to move your converted reports out to a different directory, as if you every invoke the converter again it will overwrite any changes to files still inside `converted_reports`.
+
+### Using the Matatika custom discovery.yaml (Coming Soon)
