@@ -41,7 +41,7 @@ def matatika_convert_reports():
             full_design = design_helper.design
             name = data["name"]
             title = full_design["label"]
-            description = full_design["description"]
+            description = full_design["description"] or None
             visualisation = {
                 "chartjs-chart": {"chartType": chartjs_chart_type(data["chart_type"])}
             }
