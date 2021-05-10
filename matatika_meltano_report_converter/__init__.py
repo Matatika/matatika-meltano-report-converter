@@ -61,7 +61,7 @@ def matatika_convert_reports():
                 exit(1)
 
             dataset = {
-                "version": 0.2,
+                "version": "datasets/v0.2",
                 "source": None,
                 "title": title,
                 "questions": None,
