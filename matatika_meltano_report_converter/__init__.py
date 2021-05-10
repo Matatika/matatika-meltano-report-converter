@@ -55,7 +55,7 @@ def matatika_convert_reports():
             matatika_metadata_str = matatika_metadata_builder(full_design, sql_query)
 
             dataset = {
-                "version": 0.2,
+                "version": "datasets/v0.2",
                 "source": None,
                 "title": title,
                 "questions": None,
