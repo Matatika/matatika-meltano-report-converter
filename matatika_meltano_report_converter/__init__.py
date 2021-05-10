@@ -41,7 +41,7 @@ def matatika_convert_reports():
             full_design = design_helper.design
             name = data["name"]
             title = full_design["label"]
-            description = full_design["description"]
+            description = full_design["description"] or None
             visualisation = {
                 "chartjs-chart": {"chartType": chartjs_chart_type(data["chart_type"])}
             }
@@ -85,7 +85,6 @@ def matatika_metadata_builder(full_design, sql_query):
     matatika_metadata["label"] = full_design["label"]
 
     for column in full_design["related_table"]["columns"]:
-        # if column["name"] in sql_query:
         try:
             matatika_metadata["related_table"]["columns"].append(
                 {
