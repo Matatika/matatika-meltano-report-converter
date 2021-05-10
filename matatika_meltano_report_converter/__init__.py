@@ -41,7 +41,7 @@ def matatika_convert_reports():
             full_design = design_helper.design
             name = data["name"]
             title = full_design["label"]
-            description = full_design["description"] or None
+            description = full_design["description"]
             visualisation = {
                 "chartjs-chart": {"chartType": chartjs_chart_type(data["chart_type"])}
             }
@@ -52,7 +52,13 @@ def matatika_convert_reports():
             # This means that in the yaml the metadata and visulisation will have single quotes around them to avoid the above tier-ing.
             visualisation_jsonstr = json.dumps(visualisation)
 
-            matatika_metadata_str = matatika_metadata_builder(full_design, sql_query)
+            try:
+                matatika_metadata_str = matatika_metadata_builder(
+                    full_design, sql_query
+                )
+            except KeyError as err:
+                print(f"{err} ERROR")
+                exit(1)
 
             dataset = {
                 "version": 0.2,
@@ -85,18 +91,11 @@ def matatika_metadata_builder(full_design, sql_query):
     matatika_metadata["label"] = full_design["label"]
 
     for column in full_design["related_table"]["columns"]:
-        try:
+        if column["name"] in sql_query:
             matatika_metadata["related_table"]["columns"].append(
                 {
                     "name": column["name"],
                     "description": column["description"],
-                    "label": column["label"],
-                }
-            )
-        except:
-            matatika_metadata["related_table"]["columns"].append(
-                {
-                    "name": column["name"],
                     "label": column["label"],
                 }
             )
